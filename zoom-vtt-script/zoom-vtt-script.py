@@ -57,11 +57,19 @@ with open(output_path, 'w') as vtt:
                 else:
                     start_time_delta = to_delta(time[0] + '.000')
                     updated_start_delta = start_time_delta - offset_time_delta
+                    str_start_delta = str(updated_start_delta)
+
+                    if len(str_start_delta.split(':')[0]) < 2:
+                        str_start_delta = '0' + str_start_delta
                     
                     end_time_delta = to_delta(time[0] + '.001')
                     updated_end_delta = end_time_delta - offset_time_delta
+                    str_end_delta = str(updated_end_delta)
 
-                    vtt.write('\n' + str(updated_start_delta) + '.000 --> ' + str(updated_end_delta)[:-3] + '\n')
+                    if len(str_end_delta.split(':')[0]) < 2:
+                        str_end_delta = '0' + str_end_delta
+
+                    vtt.write('\n' + str_start_delta + '.000 --> ' + str_end_delta[:-3] + '\n')
 
                     vtt.write(''.join(split_line[1:]))
             else:
