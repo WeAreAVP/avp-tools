@@ -67,6 +67,9 @@ else:
     manual_offset_delta = to_delta('00:00:00.000')
 
 for file in os.listdir(path):
+    if file[-4:] != '.vtt':
+        continue
+
     if file == '.DS_Store':
         continue
 
