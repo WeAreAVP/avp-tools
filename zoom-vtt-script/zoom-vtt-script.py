@@ -1,7 +1,7 @@
 '''
-Purpose: 
+Purpose: Converts Zoom .txt chat files to WebVTT files. Adjusts chat timestamps to transcript timestamps by subtracting the time the meeting started.
 
-Usage: 
+Usage: 'python [path to find-and-replace.py]' or 'python3 [path to find-and-replace.py]' depending on your enviroment config.
 '''
 
 import os
