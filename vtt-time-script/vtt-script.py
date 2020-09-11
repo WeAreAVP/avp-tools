@@ -1,14 +1,33 @@
+'''
+Purpose: 
+
+Usage: 
+'''
+
 import os
 import re
 from datetime import datetime
 from datetime import timedelta
 
-folder = input("What is the path of the folder where the VTTs are located? ")
+use = input('Would you like to adjust the timestamps of a single VTT or all the VTTs in a folder? Type "file" or "folder": ').strip().lower()
+
+while use != 'file' and use != 'folder':
+    print('Looks like you didn\'t type "file" or "folder". Please try running the script again')
+    use = input('Would you like to adjust the timestamps of a single VTT or all the VTTs in a folder? Type "file" or "folder": ').strip().lower()
+
+if use == 'file':
+    input_path = input('What is the full path of the VTT file?: ').strip().replace('\\','')
+elif use == 'folder':
+    input_path = input('What is the full path of the folder containing the VTTs?: ').strip().replace('\\','')
 
 if os.name == 'posix':
-    folder = folder.replace('\\','')
+    input_path = input_path.replace('\\','')
 
-path = folder.strip().strip('"')
+path = input_path.strip().strip('"')
+
+if use == 'file':
+    file = '/'.join(path.split('/')[-1:])
+    path = '/'.join(path.split('/')[:-1])
 
 output_folder = path + '/fixed_vtts'
 
@@ -58,24 +77,7 @@ def subtract_offset(time_delta, offset_delta):
 
     return joined_time
 
-if check_manual_offset == 'yes' or check_manual_offset == 'y':
-    try:
-        manual_offset_delta = to_delta(manual_offset)
-    except:
-        print('The time offset was not correctly formatted.')
-else:
-    manual_offset_delta = to_delta('00:00:00.000')
-
-for file in os.listdir(path):
-    if file[-4:] != '.vtt':
-        continue
-
-    if file == '.DS_Store':
-        continue
-
-    if os.path.isdir(path + '/' + file):
-        continue
-
+def process_file(file):
     f = open(output_folder + '/fixed_' + file, 'w')
 
     offset_time = ''
@@ -103,6 +105,33 @@ for file in os.listdir(path):
             f.write(line)
 
     f.close()
+
+if check_manual_offset == 'yes' or check_manual_offset == 'y':
+    try:
+        manual_offset_delta = to_delta(manual_offset)
+    except:
+        print('The time offset was not correctly formatted.')
+else:
+    manual_offset_delta = to_delta('00:00:00.000')
+
+if use == 'file':
+    if file[-4:] != '.vtt':
+        print('Sorry, file is not a .vtt')
+        exit()
+
+    process_file(file)
+elif use == 'folder':
+    for file in os.listdir(path):
+        if file[-4:] != '.vtt':
+            continue
+
+        if file == '.DS_Store':
+            continue
+
+        if os.path.isdir(path + '/' + file):
+            continue
+
+        process_file(file)
 
 print()
 print('Finished correcting WebVTT timestamps.')
