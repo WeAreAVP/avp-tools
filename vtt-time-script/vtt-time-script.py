@@ -1,7 +1,7 @@
 '''
-Purpose: 
+Purpose: Adjusts the timestamps of VTT files by setting the first transcript point to 00:00:00 and adjusting all other transcript points accordingly. Additionally, it can add a specified offset in case the first transcript point doesn't come at 00:00:00; for example, if the first speech comes at 00:00:13.
 
-Usage: 
+Usage: 'python [path to find-and-replace.py]' or 'python3 [path to find-and-replace.py]' depending on your enviroment config.
 '''
 
 import os

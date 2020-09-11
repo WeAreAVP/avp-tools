@@ -1,7 +1,7 @@
 '''
-Purpose: 
+Purpose: Converts SRT files to WebVTT files.
 
-Usage: 
+Usage: 'python [path to find-and-replace.py]' or 'python3 [path to find-and-replace.py]' depending on your enviroment config.
 '''
 
 import os
@@ -64,7 +64,6 @@ def process_file(file):
             f.write(line)
 
     f.close()
-
 
 if use == 'file':
     if file[-4:] != '.srt':
