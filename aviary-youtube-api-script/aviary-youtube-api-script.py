@@ -1,6 +1,7 @@
 import requests
 import json
 import csv
+import sys
 
 def get_page(page_token=False):
     if page_token:
@@ -29,7 +30,7 @@ def get_video_id(page_list):
     else:
         print('There are no more pages')
 
-api_key = 'AIzaSyBLG0DR3ypXsTh06KhpA2kx7qdgQFAj3UY'
+api_key = sys.argv[1]
 playlist_id = 'PLGPrjAxSumLomcPOTfZhbnoLEVZyLSEsK'
 max_results = 20
 part = 'id'
@@ -169,7 +170,7 @@ with open('media.csv', 'w', newline='') as media_csv:
         resource_user_key = resource_key
         path = None
         url = None
-        embed_code = '<iframe width="560" height="315" src="https://www.youtube.com/embed/{}?cc_load_policy=0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'.format(video)
+        embed_code = '<iframe width="560" height="315" src="https://www.youtube.com/embed/{}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>'.format(video)
         embed_source = 'youtube'
         target_domain = None
         sequence_num = 1
