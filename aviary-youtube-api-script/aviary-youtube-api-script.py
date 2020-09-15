@@ -46,7 +46,7 @@ get_page()
 print(item_counter)
 
 for id in video_id_list:
-    part = 'liveStreamingDetails, snippet'
+    part = 'liveStreamingDetails, snippet, recordingDetails'
     t = requests.get('https://www.googleapis.com/youtube/v3/videos', params={'part':part,'id':id,'key':api_key})
 
     video = t.json()
@@ -92,11 +92,17 @@ with open('resource.csv', 'w', newline='') as resource_csv:
         featured = 'no'
         description = video_data[video]['snippet']['description']
         try:
-            date = video_data[video]['liveStreamingDetails']['actualStartTime'][:10]
+            date = video_data[video]['recordingDetails']['recordingDate'][:10]
         except:
-            date = video_data[video]['snippet']['publishedAt'][:10]
+            try:
+                date = video_data[video]['liveStreamingDetails']['actualStartTime'][:10]
+            except:
+                date = video_data[video]['snippet']['publishedAt'][:10]
         agent = None
-        coverage = None
+        try:
+            coverage = 'Place of recording;; ' + video_data[video]['recordingDetails']['locationDescription']
+        except:
+            coverage = None
         language = None
         video_format = 'Video'
         video_type = None
