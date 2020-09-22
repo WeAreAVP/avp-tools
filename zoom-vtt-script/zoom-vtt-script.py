@@ -73,7 +73,7 @@ def process_file(file):
             for line in chat:
                 demojied_line = demoji.replace_w_desc(line)
 
-                split_line = demojied_line.split('\t ')
+                split_line = demojied_line.split('\t')
 
                 if len(split_line) > 2:
                     print('Woah!')

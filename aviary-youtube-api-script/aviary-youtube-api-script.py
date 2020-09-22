@@ -2,6 +2,10 @@ import requests
 import json
 import csv
 import sys
+import pytz
+import datetime
+
+utc = pytz.utc
 
 def get_page(page_token=False):
     if page_token:
@@ -30,8 +34,34 @@ def get_video_id(page_list):
     else:
         print('There are no more pages')
 
+def convert_time(utc_datetime, tz):
+    try:
+        strip_time = datetime.datetime.strptime(utc_datetime, '%Y-%m-%dT%H:%M:%SZ')
+    except:
+        strip_time = datetime.datetime.strptime(utc_datetime, '%Y-%m-%dT%H:%M:%S.%fZ')
+    utc_dt = utc.localize(strip_time)
+    local_dt = utc_dt.astimezone(tz)
+    local_dt = str(local_dt)[:10]
+    return local_dt
+
 api_key = sys.argv[1]
-playlist_id = 'PLGPrjAxSumLomcPOTfZhbnoLEVZyLSEsK'
+playlist_id = input('What is the playlist id?: ').strip()
+tz = input('What timezone was the upload done in? (PST/MST/CST/EST/Other): ').lower().strip()
+
+if tz == 'pst':
+    tz = pytz.timezone('US/Pacific')
+elif tz == 'mst':
+    tz = pytz.timezone('US/Mountain')
+elif tz == 'cst':
+    tz = pytz.timezone('US/Central')
+elif tz == 'est':
+    tz = pytz.timezone('US/Eastern')
+elif tz == 'other':
+    timezone_offset = input('What is the UTC offset of the timezone you wish to use? (Please enter an integer): ').strip()
+else:
+    print('The timezone you entered doesn\'t match the available options. Please use an available option.')
+    exit()
+
 max_results = 20
 part = 'id'
 
@@ -88,16 +118,17 @@ with open('resource.csv', 'w', newline='') as resource_csv:
         aviary_id = None
         resource_user_key = resource_key
         title = video_data[video]['snippet']['title']
-        public = 'yes'
+        public = 'no'
         featured = 'no'
         description = video_data[video]['snippet']['description']
         try:
             date = video_data[video]['recordingDetails']['recordingDate'][:10]
         except:
             try:
-                date = video_data[video]['liveStreamingDetails']['actualStartTime'][:10]
+                youtube_date = video_data[video]['liveStreamingDetails']['actualStartTime']
             except:
-                date = video_data[video]['snippet']['publishedAt'][:10]
+                youtube_date = video_data[video]['snippet']['publishedAt']
+            date = convert_time(youtube_date, tz)
         agent = None
         try:
             coverage = 'Place of recording;; ' + video_data[video]['recordingDetails']['locationDescription']
