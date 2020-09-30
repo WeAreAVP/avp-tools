@@ -7,7 +7,27 @@ import datetime
 
 utc = pytz.utc
 
-def get_page(page_token=False):
+def get_channel_page(channel_id, page_token=False):
+    part = 'contentDetails'
+    if page_token:
+        r = requests.get('https://www.googleapis.com/youtube/v3/channels', params={'part':part,'maxResults':max_results,'id':channel_id,'key':api_key,'pageToken':page_token})
+    else:
+        r = requests.get('https://www.googleapis.com/youtube/v3/channels', params={'part':part,'maxResults':max_results,'id':channel_id,'key':api_key})
+
+    response = r.json()
+
+    for item in response['items']:
+        try:
+            playlist_id = item['contentDetails']['relatedPlaylists']['uploads']
+            break
+        except:
+            continue
+
+    print('\n')
+    get_playlist_page(playlist_id)
+
+def get_playlist_page(playlist_id, page_token=False):
+    part = 'contentDetails'
     if page_token:
         r = requests.get('https://www.googleapis.com/youtube/v3/playlistItems', params={'part':part,'maxResults':max_results,'playlistId':playlist_id,'key':api_key, 'pageToken':page_token})
     else:
@@ -15,24 +35,20 @@ def get_page(page_token=False):
 
     response = r.json()
 
-    get_video_id(response)
+    get_video_id(response, playlist_id)
 
-def get_video_id(page_list):
+def get_video_id(page_list, playlist_id):
+    sys.stdout.write("\033[F")
+    print('Getting the list of videos.')
     global item_counter
     for video in page_list['items']:
         item_counter += 1
-        id = video['id']
-        part = ['snippet']
-        s = requests.get('https://www.googleapis.com/youtube/v3/playlistItems', params={'part':part,'id':id,'key':api_key})
+        id = video['contentDetails']['videoId']
 
-        video_dict = s.json()
-
-        video_id_list.append(video_dict['items'][0]['snippet']['resourceId']['videoId'])
+        video_id_list.append(id)
 
     if 'nextPageToken' in page_list:
-        get_page(page_list['nextPageToken'])
-    else:
-        print('There are no more pages')
+        get_playlist_page(playlist_id, page_list['nextPageToken'])
 
 def convert_time(utc_datetime, tz):
     try:
@@ -45,8 +61,30 @@ def convert_time(utc_datetime, tz):
     return local_dt
 
 api_key = sys.argv[1]
-playlist_id = input('What is the playlist id?: ').strip()
-tz = input('What timezone was the upload done in? (PST/MST/CST/EST/Other): ').lower().strip()
+
+max_results = 20
+video_id_list = []
+video_data = {}
+item_counter = 0
+
+scope = input('Would you like to get the metadata of a channel\'s or playlist\'s videos? (Enter "channel" or "playlist"): ').lower().strip()
+
+if scope == 'channel':
+    channel_id = input('What is the channel id?: ').strip()
+    get_channel_page(channel_id)
+elif scope == 'playlist':
+    playlist_id = input('What is the playlist id?: ').strip()
+
+    print('\n')
+
+    get_playlist_page(playlist_id)
+else:
+    print('The scope you entered doesn\'t match the available options. Please use an available option.')
+    exit()
+
+print('\nGot a list of ' + str(item_counter) + ' videos.\n')
+
+tz = input('What timezone were the uploads done in? (PST/MST/CST/EST/Other): ').lower().strip()
 
 if tz == 'pst':
     tz = pytz.timezone('US/Pacific')
@@ -62,20 +100,14 @@ else:
     print('The timezone you entered doesn\'t match the available options. Please use an available option.')
     exit()
 
-max_results = 20
-part = 'id'
+video_counter = 0
 
-video_id_list = []
-
-video_data = {}
-
-item_counter = 0
-
-get_page()
-
-print(item_counter)
+print('\n')
 
 for id in video_id_list:
+    video_counter += 1
+    sys.stdout.write("\033[F")
+    print('Getting metadata for video ' + str(video_counter) + ' of ' + str(item_counter) + '.')
     part = 'liveStreamingDetails, snippet, recordingDetails'
     t = requests.get('https://www.googleapis.com/youtube/v3/videos', params={'part':part,'id':id,'key':api_key})
 
@@ -83,7 +115,10 @@ for id in video_id_list:
 
     video_data[id] = video['items'][0]
 
+print('')
+
 with open('resource.csv', 'w', newline='') as resource_csv:
+    print('Writing out resource.csv.\n')
     rw = csv.writer(resource_csv, delimiter=',')
     header = [
         'aviary ID',
@@ -180,6 +215,7 @@ with open('resource.csv', 'w', newline='') as resource_csv:
         resource_key += 1
 
 with open('media.csv', 'w', newline='') as media_csv:
+    print('Writing out media.csv.\n')
     mw = csv.writer(media_csv, delimiter=',')
     header = [
         'aviary ID',
@@ -233,4 +269,4 @@ with open('media.csv', 'w', newline='') as media_csv:
         resource_key += 1
         media_key += 1
 
-# Todo: Add console outpuit
+print('All done!')
