@@ -6,8 +6,6 @@ Usage: 'python [path to find-and-replace.py]' or 'python3 [path to find-and-repl
 
 import os
 import re
-from datetime import datetime
-from datetime import timedelta
 
 use = input('Would you like to convert a single SRT or all the SRTs in a folder? Type "file" or "folder": ').strip().lower()
 
