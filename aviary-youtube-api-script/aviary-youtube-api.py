@@ -95,7 +95,10 @@ elif tz == 'cst':
 elif tz == 'est':
     tz = pytz.timezone('US/Eastern')
 elif tz == 'other':
-    timezone_offset = input('What is the UTC offset of the timezone you wish to use? (Please enter an integer): ').strip()
+    country_code = input('What country were the videos recorded in? Please use the ISO 3166 country code: ').strip()
+    print('|'.join(pytz.country_timezones[country_code]))
+    tz_string = input('Please type in one of the timezones above: ').strip()
+    tz = pytz.timezone(tz_string)
 else:
     print('The timezone you entered doesn\'t match the available options. Please use an available option.')
     exit()
