@@ -1,7 +1,7 @@
 '''
 Purpose: Converts TXT files to WebVTT files.
 
-Usage: 'python [path to otter-txt-to-vtt.py]' or 'python3 [path to otter-txt-to-vtt.py]' depending on your enviroment config.
+Usage: 'python [path to otter-txt-to-vtt.py]' or 'python3 [path to otter-txt-to-vtt.py]' depending on your environment config.
 '''
 
 import os
