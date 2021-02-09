@@ -13,13 +13,17 @@ while use != 'file' and use != 'folder':
     print('Looks like you didn\'t type "file" or "folder". Please try running the script again')
     use = input('Would you like to convert a single SRT or all the SRTs in a folder? Type "file" or "folder": ').strip().lower()
 
+print()
+
 if use == 'file':
-    input_path = input('What is the full path of the SRT file?: ').strip().replace('\\','')
+    input_path = input('What is the full path of the SRT file?: ').strip()
 elif use == 'folder':
-    input_path = input('What is the full path of the folder containing the SRTs?: ').strip().replace('\\','')
+    input_path = input('What is the full path of the folder containing the SRTs?: ').strip()
 
 if os.name == 'posix':
     input_path = input_path.replace('\\','')
+else:
+    input_path = input_path.replace('\\','/')
 
 path = input_path.strip().strip('"')
 

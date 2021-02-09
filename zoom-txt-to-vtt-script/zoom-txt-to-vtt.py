@@ -34,12 +34,14 @@ while use != 'file' and use != 'folder':
 print()
 
 if use == 'file':
-    input_path = input('What is the full path of the Zoom .txt chat file?: ').strip().replace('\\','')
+    input_path = input('What is the full path of the Zoom .txt chat file?: ').strip()
 elif use == 'folder':
-    input_path = input('What is the full path of the folder containing the Zoom .txt chat files? (Warning: This will attempt to convert all .txt files in this folder. Original files will be unaffected.): ').strip().replace('\\','')
+    input_path = input('What is the full path of the folder containing the Zoom .txt chat files? (Warning: This will attempt to convert all .txt files in this folder. Original files will be unaffected.): ').strip()
 
 if os.name == 'posix':
     input_path = input_path.replace('\\','')
+else:
+    input_path = input_path.replace('\\','/')
 
 path = input_path.strip().strip('"')
 
