@@ -1,7 +1,7 @@
 '''
 Purpose: Converts SRT files to WebVTT files.
 
-Usage: 'python [path to find-and-replace.py]' or 'python3 [path to find-and-replace.py]' depending on your enviroment config.
+Usage: 'python [path to srt-to-vtt.py]' or 'python3 [path to srt-to-vtt.py]' depending on your enviroment config.
 '''
 
 import os
