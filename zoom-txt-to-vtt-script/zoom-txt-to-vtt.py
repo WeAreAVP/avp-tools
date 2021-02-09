@@ -73,10 +73,10 @@ def process_file(file):
 
     offset_time_delta = to_delta(offset_time_group + '.000')
 
-    with open(output_folder + '/' + file[:-4] + '.vtt', 'w') as vtt:
+    with open(output_folder + '/' + file[:-4] + '.vtt', 'w', encoding='utf-8') as vtt:
         vtt.write('WEBVTT' + '\n')
 
-        with open(path + '/' + file, 'r') as chat:
+        with open(path + '/' + file, 'r', encoding='utf-8') as chat:
 
             storage = ''
             start_time = None
@@ -84,7 +84,7 @@ def process_file(file):
             new_start_time = None
 
             for line in chat:
-                demojied_line = demoji.replace_w_desc(line)
+                demojied_line = demoji.replace_with_desc(line)
 
                 split_line = demojied_line.split('\t')
 
